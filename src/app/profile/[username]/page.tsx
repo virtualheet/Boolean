@@ -9,6 +9,9 @@ import { UserButton, UserProfile } from "@clerk/clerk-react";
 const ProfilePage = () => {
     const { username } = useParams();
     const { user } = useUser();
+
+    // const response = await fetch('/api/users/profile');
+    // const data = await response.json();
     const [darkMode, setDarkMode] = useState(true);
 
     // Initialize theme from localStorage or system preference
@@ -106,10 +109,10 @@ const ProfilePage = () => {
                         
                         {/* Name and bio */}
                         <h1 className="text-2xl font-semibold mb-1 capitalize">
-                            {user?.firstName}  {user?.lastName}
+                            {user?.firstName} {user?.lastName}
                         </h1>
                         <p className="text-base text-black/70 dark:text-white/70 mb-8">
-                            {profileData.description}
+                            description
                         </p>
                     </div>
 

@@ -19,10 +19,22 @@ model User {
   profileImage   String?
   socialLinks    Json      @default("[]")
   skills         Json      @default("[]")
+  isFreelancer   Boolean   @default(false)
+  isClient       Boolean   @default(false)
   rating         Float?
   joinedAt       DateTime  @default(now())
   username       String?   @unique
-  cradits        Int       @default(7)
+  
+  portfolioProjects PortfolioProject[] @relation("UserPortfolioProjects")
+  works          Work[]    @relation("UserWorks")
+  proposals      Proposal[] @relation("UserProposals")
+  payments       Payment[]  @relation("UserPayments")
+  receivedPayments Payment[] @relation("UserReceivedPayments")
+  buying         Buyer[]    @relation("UserBuyers")
+  selling        Seller[]   @relation("UserSellers")
+  sentMessages   Message[]  @relation("MessageSender")
+  receivedMessages Message[] @relation("MessageReceiver")
+  contactInfo    Json      @default("[]")
 
   @@map("users")
 }
@@ -32,47 +44,133 @@ model PortfolioProject {
   title       String
   description String
   link        String?
-  duration    String?
-  clientName  String?
-  teamMembers Int?
-  userId      String   @unique
-  userRole    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  user        User     @relation("UserPortfolioProjects", fields: [userId], references: [id])
+  userId      String
 
   @@map("portfolio_projects")
 }
 
-model UserCreatedproject {
+model Work {
   id          String   @id @default(uuid())
-  userId      String   @unique
   title       String
   description String
-  pricing     Float
-  category    Json      @default("[]")
+  category    String
+  subcategory String?
   skills      Json      @default("[]")
-  duration    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("user_created_projects")
-}
-
-model asFreelancer {
-  id          String   @id @default(uuid())
-  userId      String   @unique
+  pricing     Float
+  pricingType String   
+  duration    String?  
+  images      Json      @default("[]")
+  rating      Float?
+  ratingCount Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
-  @@map("as_freelancers")
+  user        User     @relation("UserWorks", fields: [userId], references: [id])
+  userId      String
+  proposals   Proposal[] @relation("WorkProposals")
+  projects    Project[] @relation("WorkProjects")
+
+  @@map("works")
 }
 
-model asJobCreater {
+model Proposal {
   id          String   @id @default(uuid())
-  userId      String   @unique
+  description String
+  price       Float
+  duration    String
+  status      String   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
-  @@map("as_job_creaters")
+  user        User     @relation("UserProposals", fields: [userId], references: [id])
+  userId      String
+  work        Work     @relation("WorkProposals", fields: [workId], references: [id])
+  workId      String
+  project     Project? @relation("ProjectProposal")
+
+  @@map("proposals")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  status      String   
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  milestones  Json      @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  work        Work     @relation("WorkProjects", fields: [workId], references: [id])
+  workId      String
+  proposal    Proposal @relation("ProjectProposal", fields: [proposalId], references: [id])
+  proposalId  String   @unique
+  buyer       Buyer    @relation("BuyerProjects", fields: [buyerId], references: [id])
+  buyerId     String
+  seller      Seller   @relation("SellerProjects", fields: [sellerId], references: [id])
+  sellerId    String
+  payments    Payment[] @relation("ProjectPayments")
+  messages    Message[] @relation("ProjectMessages")
+
+  @@map("projects")
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  amount      Float
+  description String?
+  status      String  
+  type        String  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  sender      User     @relation("UserPayments", fields: [senderId], references: [id])
+  senderId    String
+  receiver    User     @relation("UserReceivedPayments", fields: [receiverId], references: [id])
+  receiverId  String
+  project     Project  @relation("ProjectPayments", fields: [projectId], references: [id])
+  projectId   String
+
+  @@map("payments")
+}
+
+model Buyer {
+  id         String    @id @default(uuid())
+  user       User      @relation("UserBuyers", fields: [userId], references: [id])
+  userId     String
+  projects   Project[] @relation("BuyerProjects")
+  createdAt  DateTime  @default(now())
+
+  @@map("buyers")
+}
+
+model Seller {
+  id         String    @id @default(uuid())
+  user       User      @relation("UserSellers", fields: [userId], references: [id])
+  userId     String
+  projects   Project[] @relation("SellerProjects")
+  createdAt  DateTime  @default(now())
+
+  @@map("sellers")
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  content     String
+  read        Boolean  @default(false)
+  attachments Json      @default("[]")
+  createdAt   DateTime @default(now())
+  
+  sender      User     @relation("MessageSender", fields: [senderId], references: [id])
+  senderId    String
+  receiver    User     @relation("MessageReceiver", fields: [receiverId], references: [id])
+  receiverId  String
+  project     Project  @relation("ProjectMessages", fields: [projectId], references: [id])
+  projectId   String
+
+  @@map("messages")
 }

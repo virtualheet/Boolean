@@ -3,9 +3,13 @@ import { Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Fields from "@/components/Fields"
 import Link from "next/link"
+import HomeProducts from "@/components/HomeProducts"
+import ServiceCard from "@/components/ServiceCard"
+import ServiceCardGrid from "@/components/ServiceCardGrid"
 
 export default function ProductivityLanding() {
   return (
+    <>
     <div className="relative min-h-screen bg-white dark:bg-black w-full h-screen items-center  overflow-hidden "
       // style={{
       //   padding: "clamp(1rem,5vw,200rem) 0 0"
@@ -216,7 +220,155 @@ export default function ProductivityLanding() {
           </div>
         </div>
       </div>
+    
+    
     </div>
+    <div className={''}>
+      <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors duration-300">
+        <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-4 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Logo Design Services</h1>
+        </header>
+        
+        <main className="max-w-7xl mx-auto">
+          <ServiceCardGrid title="Based on your browsing history" services={browserHistoryServices} />
+          <ServiceCardGrid title="Gigs you may like" services={gigsYouMayLike} />
+        </main>
+      </div>
+    </div>
+    </>
   )
 }
 
+
+
+const browserHistoryServices = [
+  {
+    id: '1',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-yellow-400",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Bhavik C",
+    isPro: false,
+    isTopRated: true,
+    title: "I will do 3 modern minimalist logo design for your business",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹4,129",
+    hasVideoConsultation: true
+  },
+  {
+    id: '2',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-blue-100",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Louis Key",
+    isPro: true,
+    isTopRated: false, 
+    title: "I will design a timeless logo",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹11,926",
+    hasVideoConsultation: false
+  },
+  {
+    id: '3',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-slate-800",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Abhi C",
+    isPro: false,
+    isTopRated: true,
+    title: "I will do modern line art text or badge logo design",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹2,294",
+    hasVideoConsultation: true
+  },
+  {
+    id: '4',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-gradient-to-r from-blue-600 to-purple-600",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Bojan Sandic",
+    isPro: true,
+    isTopRated: false,
+    title: "I will design creative logo with all files in 72h",
+    rating: 4.9,
+    reviews: "1k+",
+    price: "₹11,009",
+    hasVideoConsultation: true
+  }
+];
+
+const gigsYouMayLike = [
+  {
+    id: '5',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-slate-800",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Abhi C",
+    isPro: false,
+    isTopRated: true,
+    title: "I will do modern line art text or badge logo design",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹2,294",
+    hasVideoConsultation: true
+  },
+  {
+    id: '6',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-gradient-to-r from-blue-600 to-purple-600",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Bojan Sandic",
+    isPro: true,
+    isTopRated: false,
+    title: "I will design creative logo with all files in 72h",
+    rating: 4.9,
+    reviews: "1k+",
+    price: "₹11,009",
+    hasVideoConsultation: true
+  },
+  {
+    id: '7',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-amber-100",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Alestra Sol",
+    isPro: false,
+    isTopRated: true,
+    title: "I will do modern business logo design with copyrights",
+    rating: 4.9,
+    reviews: "1k+",
+    price: "₹4,129",
+    hasVideoConsultation: false
+  },
+  {
+    id: '8',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-white",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Martina D",
+    isPro: false,
+    isTopRated: true,
+    title: "I will create a professional minimalist business logo design",
+    rating: 4.9,
+    reviews: "1k+",
+    price: "₹2,294",
+    hasVideoConsultation: false
+  },
+  {
+    id: '9',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-red-600",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Stefana",
+    isPro: false,
+    isTopRated: true,
+    title: "I will design a flat and minimalist logo within 12 hours",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹4,129",
+    hasVideoConsultation: false
+  }
+];

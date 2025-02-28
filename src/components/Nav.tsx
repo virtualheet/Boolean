@@ -40,9 +40,9 @@ const Navbar = () => {
     }, []);
 
     return (
-        <nav className="fixed bottom-1 z-50 w-full  bg-transparent dark:bg-transparent transition-colors duration-200">
-            <div className="w-[50%] border-2 bg-white dark:bg-black border-black/20 dark:border-white/40 rounded-2xl mx-auto px-4 sm:px-6 lg:px-3">
-                <div className="flex items-center justify-between h-16">
+        <nav className="sticky top-0 z-[9998] w-full  bg-transparent dark:bg-transparent transition-colors duration-200">
+            <div className="w-[50%] border-2 bg-white dark:bg-black border-black/20 dark:border-white/40 rounded-2xl mx-auto px-4 sm:px-6 lg:px-2">
+                <div className="flex items-center justify-between h-12">
                     {/* Logo and project name */}
                     <div className="flex items-center"
                         style={{
@@ -56,7 +56,7 @@ const Navbar = () => {
                                     width={100}
                                     height={100}
                                     alt='logo'
-                                    className='w-12 border-2  border-black dark:border-white rounded-xl '
+                                    className='w-10 border-2  border-black dark:border-white rounded-xl '
                                 />
                                 {/* <span className="text-gray-900 dark:text-white font-medium text-lg">
                                     Boolean
@@ -65,7 +65,7 @@ const Navbar = () => {
                         </div>
 
                         {/* Navigation Links */}
-                        <div className="hidden md:block text-lg text-black dark:text-white">
+                        <div className="hidden md:block text-base text-black dark:text-white">
                             <div className=" flex items-center"
                                 style={{
                                     gap: 'clamp(1rem,1vw,200rem)'
@@ -81,6 +81,10 @@ const Navbar = () => {
                                 <Link href="/contact" className=" rounded-md  font-medium  transition-all duration-300 hover:text-indigo-600 dark:hover:text-indigo-400">
                                     Contact
                                 </Link>
+                                <Link href={`/profile/${user?.username}`} className=" rounded-md  font-medium  transition-all duration-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                    Profile
+                                </Link>
+                                
                             </div>
                         </div>
                     </div>
@@ -89,14 +93,14 @@ const Navbar = () => {
                             gap: 'clamp(0.5rem,0.5vw,200rem)'
                         }}
                     >
-                        <div className="flex h-12 border-2 overflow-hidden text-lg border-black/20 dark:border-white/40 rounded-xl">
+                        <div className="flex h-10 border-2 overflow-hidden text-base border-black/20 dark:border-white/40 rounded-xl">
                             <input
-                               type="text"
-                               placeholder="search"
-                               ref={searchInputRef}
+                                type="text"
+                                placeholder="search                  Cntrl + I"
+                                ref={searchInputRef}
                                 className="flex-grow px-4 text-black bg-transparent focus:outline-none"
                             />
-                            <div className='bg-black  dark:bg-white text-white dark:text-black cursor-pointer w-12 flex text-lg items-center justify-center'>
+                            <div className='bg-black  dark:bg-white text-white dark:text-black cursor-pointer w-10 flex text-lg items-center justify-center'>
                                 <Search className="m-2" />
                             </div>
                         </div>
@@ -112,8 +116,8 @@ const Navbar = () => {
                                 onClick={() => {
                                     toggleTheme();
                                     playsound();
-                                  }}
-                                className="w-12 h-12 border-2 items-center flex justify-center text-2xl border-black/40 dark:border-white/40 rounded-xl  text-black dark:text-white  focus:outline-none"
+                                }}
+                                className="w-10 h-10 border-2 items-center flex justify-center text-2xl border-black/40 dark:border-white/40 rounded-xl  text-black dark:text-white  focus:outline-none"
                                 aria-label="Toggle dark mode"
                             >
                                 {mounted && (
@@ -125,21 +129,21 @@ const Navbar = () => {
 
                             {/* User button */}
                             <div className="flex items-center">
-                                {user ?     <UserButton
+                                {user ? <UserButton
 
-appearance={{
-    elements: {
-        rootBox: 'hover:opacity-80 transition-opacity',
-        avatarBox: 'w-12 h-12 rounded-xl',
-    }
-}}
-/> :  <Link href={'/sign-in'}
->
-    <Button>
-        Login
-    </Button>
-</Link>}
-                            
+                                    appearance={{
+                                        elements: {
+                                            rootBox: 'hover:opacity-80 transition-opacity',
+                                            avatarBox: 'w-10 h-10 rounded-xl',
+                                        }
+                                    }}
+                                /> : <Link href={'/sign-in'}
+                                >
+                                    <Button className='h-full'>
+                                        Login
+                                    </Button>
+                                </Link>}
+
                             </div>
                         </div>
                     </div>

@@ -3,8 +3,25 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useUserProfile } from '@/context/UserContext';
+import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import { 
+  Save, 
+  Upload,
+  Plus,
+  Trash2
+} from 'lucide-react';
 
 interface CustomProfile {
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  username: string | null;
   about: string | null;
   socialLinks: string[];
   skills: string[];
@@ -20,10 +37,15 @@ interface CustomProfile {
 
 const ProfilePage = () => {
   const { firstName, lastName, fullName, email, profileImageUrl, loading } = useUserProfile();
-  const [isEditing, setIsEditing] = useState(false);
   const [customProfile, setCustomProfile] = useState<CustomProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [username, setUsername] = useState('')
+  const [saving, setSaving] = useState(false);
+  const [previewProfilePhoto, setPreviewProfilePhoto] = useState<string | null>(null);
+  
+  // New form state for adding items
+  const [newSkill, setNewSkill] = useState('');
+  const [newSocialLink, setNewSocialLink] = useState('');
+  const [newContactInfo, setNewContactInfo] = useState('');
 
   const parseJsonField = (field: any): string[] => {
     if (Array.isArray(field)) return field;
@@ -41,9 +63,13 @@ const ProfilePage = () => {
       const responseProjects = await fetch('/api/users/portfolio');
       const data = await response.json();
       const dataProjects = await responseProjects.json();
-      console.log("User Fetch ::" , data)
-      console.log("Projects Fetch ::" , dataProjects)
+      console.log("User Fetch ::" , data);
+      console.log("Projects Fetch ::" , dataProjects);
       setCustomProfile({
+        firstName: data.firstName || firstName || null,
+        lastName: data.lastName || lastName || null,
+        email: data.email || email || null,
+        username: data.username || '',
         about: data.about || null,
         socialLinks: parseJsonField(data.socialLinks),
         skills: parseJsonField(data.skills),
@@ -54,7 +80,6 @@ const ProfilePage = () => {
           ? dataProjects 
           : [],
       });
-      setUsername(data.username || '')
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -74,25 +99,84 @@ const ProfilePage = () => {
     });
   };
 
-  const handleArrayInputChange = (field: 'socialLinks' | 'skills' | 'contactInfo', value: string) => {
-    if (!customProfile) return;
+  // Profile photo handling
+  const handleProfilePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setPreviewProfilePhoto(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+      // Here you would typically upload the image to your server
+      // For now we're just handling the preview
+    }
+  };
+
+  // Skills handling
+  const handleAddSkill = () => {
+    if (!customProfile || !newSkill.trim()) return;
     setCustomProfile({
       ...customProfile,
-      [field]: [...customProfile[field], value]
+      skills: [...customProfile.skills, newSkill.trim()]
+    });
+    setNewSkill('');
+  };
+
+  const handleRemoveSkill = (index: number) => {
+    if (!customProfile) return;
+    const newSkills = [...customProfile.skills];
+    newSkills.splice(index, 1);
+    setCustomProfile({
+      ...customProfile,
+      skills: newSkills
     });
   };
 
-  const removeArrayItem = (field: 'socialLinks' | 'skills' | 'contactInfo', index: number) => {
-    if (!customProfile) return;
-    const newArray = [...customProfile[field]];
-    newArray.splice(index, 1);
+  // Social links handling
+  const handleAddSocialLink = () => {
+    if (!customProfile || !newSocialLink.trim()) return;
     setCustomProfile({
       ...customProfile,
-      [field]: newArray
+      socialLinks: [...customProfile.socialLinks, newSocialLink.trim()]
+    });
+    setNewSocialLink('');
+  };
+
+  const handleRemoveSocialLink = (index: number) => {
+    if (!customProfile) return;
+    const newLinks = [...customProfile.socialLinks];
+    newLinks.splice(index, 1);
+    setCustomProfile({
+      ...customProfile,
+      socialLinks: newLinks
     });
   };
 
-  const handlePortfolioProjectAdd = () => {
+  // Contact info handling
+  const handleAddContactInfo = () => {
+    if (!customProfile || !newContactInfo.trim()) return;
+    setCustomProfile({
+      ...customProfile,
+      contactInfo: [...customProfile.contactInfo, newContactInfo.trim()]
+    });
+    setNewContactInfo('');
+  };
+
+  const handleRemoveContactInfo = (index: number) => {
+    if (!customProfile) return;
+    const newInfo = [...customProfile.contactInfo];
+    newInfo.splice(index, 1);
+    setCustomProfile({
+      ...customProfile,
+      contactInfo: newInfo
+    });
+  };
+
+  // Portfolio projects handling
+  const handleAddProject = () => {
     if (!customProfile) return;
     setCustomProfile({
       ...customProfile,
@@ -103,7 +187,7 @@ const ProfilePage = () => {
     });
   };
 
-  const handlePortfolioProjectChange = (index: number, field: 'title' | 'description' | 'link', value: string) => {
+  const handleProjectChange = (index: number, field: 'title' | 'description' | 'link', value: string) => {
     if (!customProfile) return;
     const updatedProjects = [...customProfile.portfolioProjects];
     updatedProjects[index] = {
@@ -116,7 +200,7 @@ const ProfilePage = () => {
     });
   };
 
-  const removePortfolioProject = (index: number) => {
+  const handleRemoveProject = (index: number) => {
     if (!customProfile) return;
     const updatedProjects = [...customProfile.portfolioProjects];
     updatedProjects.splice(index, 1);
@@ -127,6 +211,9 @@ const ProfilePage = () => {
   };
 
   const handleSubmit = async () => {
+    if (!customProfile) return;
+    
+    setSaving(true);
     try {
       const response = await fetch('/api/users/profile', {
         method: 'PUT',
@@ -137,11 +224,12 @@ const ProfilePage = () => {
       });
 
       if (response.ok) {
-        setIsEditing(false);
         await fetchCustomProfile();
       }
     } catch (error) {
       console.error('Error updating profile:', error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -154,288 +242,310 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold dark:text-white">Profile</h1>
-          <button
-            onClick={() => isEditing ? handleSubmit() : setIsEditing(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            {isEditing ? 'Save Changes' : 'Edit Profile'}
-          </button>
-        </div>
-
-        <div className="space-y-6">
-          {/* Clerk User Information (Read-only) */}
-          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4 dark:text-white">Basic Information</h2>
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="relative w-16 h-16  ">
-                <Image
-                  src={profileImageUrl || '/default-avatar.png'}
-                  alt="Profile"
-                  fill
-                  className="rounded-full object-cover"
-                />
-              </div>
-              
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
-                <p className="mt-1 dark:text-white">{firstName}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
-                <p className="mt-1 dark:text-white">{lastName}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                <p className="mt-1 dark:text-white">{email}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
-                <p className="mt-1 dark:text-white">{username}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Custom Profile Information (Editable) */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4 dark:text-white">Additional Information</h2>
+    <div className="relative min-h-screen">
+      {/* Fixed Save Button - stays visible while scrolling */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button 
+          onClick={handleSubmit} 
+          disabled={saving}
+          size="lg" 
+          className="shadow-lg flex items-center gap-2"
+        >
+          <Save className="h-5 w-5" />
+          {saving ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
+      
+      <div className="mx-auto px-4 py-8 max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div>
             
-            {/* About */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">About</label>
-              {isEditing ? (
-                <textarea
-                  value={customProfile.about || ''}
-                  onChange={(e) => handleInputChange('about', e.target.value)}
-                  className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
-                  rows={4}
-                />
-              ) : (
-                <p className="mt-1 dark:text-white">{customProfile.about}</p>
-              )}
-            </div>
-
-            {/* Account Type */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Account Type</label>
-              {isEditing ? (
-                <div className="space-x-4 mt-1">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={customProfile.isFreelancer}
-                      onChange={(e) => handleInputChange('isFreelancer', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="dark:text-white">Freelancer</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={customProfile.isClient}
-                      onChange={(e) => handleInputChange('isClient', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="dark:text-white">Client</span>
-                  </label>
-                </div>
-              ) : (
-                <div className="mt-1">
-                  {customProfile.isFreelancer && <span className="mr-2 dark:text-white">Freelancer</span>}
-                  {customProfile.isClient && <span className="dark:text-white">Client</span>}
-                </div>
-              )}
-            </div>
-
-            {/* Skills */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Skills</label>
-              <div className="mt-1 flex flex-wrap gap-2">
-                {customProfile?.skills?.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full flex items-center"
-                  >
-                    <span className="dark:text-white">{skill}</span>
-                    {isEditing && (
-                      <button
-                        onClick={() => removeArrayItem('skills', index)}
-                        className="ml-2 text-red-500"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </span>
-                ))}
-                {isEditing && (
-                  <input
-                    type="text"
-                    placeholder="Add skill"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleArrayInputChange('skills', e.currentTarget.value);
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                    className="p-2 border rounded dark:bg-gray-700 dark:text-white"
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Social Links</label>
-              <div className="mt-1 space-y-2">
-                {customProfile?.socialLinks?.map((link, index) => (
-                  <div key={index} className="flex items-center">
-                    <span className="flex-1 dark:text-white">{link}</span>
-                    {isEditing && (
-                      <button
-                        onClick={() => removeArrayItem('socialLinks', index)}
-                        className="ml-2 text-red-500"
-                      >
-                        Remove
-                      </button>
-                    )}
+            <div className="space-y-8 ">
+              {/* Profile Photo */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-6">
+                  <div className="relative">
+                    <div className="h-32 w-32 rounded-full overflow-hidden border-4 border-gray-800 ring-4 ring-blue-500/30">
+                      <Image
+                        src={previewProfilePhoto || profileImageUrl || "/default-avatar.png"}
+                        alt="Profile"
+                        width={128}
+                        height={128}
+                        className="object-cover"
+                      />
+                    </div>
+                    <label className="absolute bottom-0 right-0 cursor-pointer">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleProfilePhotoChange}
+                      />
+                      <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+                        <Upload className="h-4 w-4" />
+                      </div>
+                    </label>
                   </div>
-                ))}
-                {isEditing && (
-                  <input
-                    type="text"
-                    placeholder="Add social link"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleArrayInputChange('socialLinks', e.currentTarget.value);
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                    className="p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Information</label>
-              <div className="mt-1 space-y-2">
-                {customProfile.contactInfo?.map((info, index) => (
-                  <div key={index} className="flex items-center">
-                    <span className="flex-1 dark:text-white">{info}</span>
-                    {isEditing && (
-                      <button
-                        onClick={() => removeArrayItem('contactInfo', index)}
-                        className="ml-2 text-red-500"
-                      >
-                        Remove
-                      </button>
-                    )}
+                  <div className="text-sm text-gray-400">
+                    Click the upload button to change your profile photo.
+                    <br />
+                    Recommended size: 400x400 pixels.
                   </div>
-                ))}
-                {isEditing && (
-                  <input
-                    type="text"
-                    placeholder="Add contact info"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleArrayInputChange('contactInfo', e.currentTarget.value);
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                    className="p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
-                  />
-                )}
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Portfolio Projects */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg mt-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold dark:text-white">Portfolio Projects</h2>
-              {isEditing && (
-                <button
-                  onClick={handlePortfolioProjectAdd}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                >
-                  Add Project
-                </button>
-              )}
-            </div>
-            
-            <div className="space-y-4">
-              {customProfile.portfolioProjects.map((project, index) => (
-                <div key={index} className="border dark:border-gray-600 rounded-lg p-4">
-                  {isEditing ? (
-                    <>
-                      <div className="mb-3">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Project Title</label>
-                        <input
-                          type="text"
-                          value={project.title}
-                          onChange={(e) => handlePortfolioProjectChange(index, 'title', e.target.value)}
-                          className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
-                          placeholder="Project Title"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                        <textarea
-                          value={project.description}
-                          onChange={(e) => handlePortfolioProjectChange(index, 'description', e.target.value)}
-                          className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
-                          rows={3}
-                          placeholder="Project Description"
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Project Link</label>
-                        <input
-                          type="text"
-                          value={project.link}
-                          onChange={(e) => handlePortfolioProjectChange(index, 'link', e.target.value)}
-                          className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
-                          placeholder="https://..."
-                        />
-                      </div>
-                      <button
-                        onClick={() => removePortfolioProject(index)}
-                        className="text-red-500 hover:text-red-700"
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Basic Information</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      value={customProfile.firstName || ""}
+                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      value={customProfile.lastName || ""}
+                      onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={customProfile.email || ""}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      value={customProfile.username || ""}
+                      onChange={(e) => handleInputChange("username", e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Additional Information</h3>
+
+                <div className="space-y-2">
+                  <Label htmlFor="about">About</Label>
+                  <Textarea
+                    id="about"
+                    value={customProfile.about || ""}
+                    onChange={(e) => handleInputChange("about", e.target.value)}
+                    rows={4}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label>Account Type</Label>
+                  <div className="flex gap-4">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="freelancer"
+                        checked={customProfile.isFreelancer}
+                        onCheckedChange={(checked) => handleInputChange("isFreelancer", checked)}
+                      />
+                      <label htmlFor="freelancer">Freelancer</label>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="client"
+                        checked={customProfile.isClient}
+                        onCheckedChange={(checked) => handleInputChange("isClient", checked)}
+                      />
+                      <label htmlFor="client">Client</label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Skills */}
+                <div className="space-y-2">
+                  <Label>Skills</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newSkill}
+                      onChange={(e) => setNewSkill(e.target.value)}
+                      placeholder="Add a skill"
+                      onKeyPress={(e) => e.key === "Enter" && handleAddSkill()}
+                    />
+                    <Button onClick={handleAddSkill} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {customProfile.skills.map((skill, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 bg-secondary text-secondary-foreground px-2 py-1 rounded-md"
                       >
-                        Remove Project
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <h3 className="text-lg font-semibold dark:text-white">{project.title}</h3>
-                      <p className="text-gray-600 dark:text-gray-300 mt-2">{project.description}</p>
-                      {project.link && (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-2 inline-block"
+                        <span>{skill}</span>
+                        <button
+                          onClick={() => handleRemoveSkill(index)}
+                          className="text-secondary-foreground/50 hover:text-secondary-foreground"
                         >
-                          View Project →
-                        </a>
-                      )}
-                    </>
-                  )}
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-              {!isEditing && customProfile.portfolioProjects.length === 0 && (
-                <p className="text-gray-500 dark:text-gray-400 text-center py-4">No portfolio projects added yet.</p>
-              )}
+
+                {/* Social Links */}
+                <div className="space-y-2">
+                  <Label>Social Links</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newSocialLink}
+                      onChange={(e) => setNewSocialLink(e.target.value)}
+                      placeholder="Add a social link"
+                      onKeyPress={(e) => e.key === "Enter" && handleAddSocialLink()}
+                    />
+                    <Button onClick={handleAddSocialLink} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {customProfile.socialLinks.map((link, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Input value={link || ""} disabled />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveSocialLink(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-2">
+                  <Label>Contact Information</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newContactInfo}
+                      onChange={(e) => setNewContactInfo(e.target.value)}
+                      placeholder="Add contact information"
+                      onKeyPress={(e) => e.key === "Enter" && handleAddContactInfo()}
+                    />
+                    <Button onClick={handleAddContactInfo} size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {customProfile.contactInfo.map((info, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Input value={info || ""} disabled />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveContactInfo(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Portfolio Projects */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Portfolio Projects</h3>
+                  <Button onClick={handleAddProject} variant="outline">
+                    Add Project
+                  </Button>
+                </div>
+
+                <div className="space-y-6">
+                  {customProfile.portfolioProjects.map((project, index) => (
+                    <div key={index}>
+                      <div className="pt-6">
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Project {index + 1}</h4>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveProject(index)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <Label>Project Title</Label>
+                              <Input
+                                value={project.title || ""}
+                                onChange={(e) => handleProjectChange(index, "title", e.target.value)}
+                                placeholder="Enter project title"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>Description</Label>
+                              <Textarea
+                                value={project.description || ""}
+                                onChange={(e) => handleProjectChange(index, "description", e.target.value)}
+                                placeholder="Enter project description"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>Project Link</Label>
+                              <Input
+                                value={project.link || ""}
+                                onChange={(e) => handleProjectChange(index, "link", e.target.value)}
+                                placeholder="https://"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 pb-16">
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.href = `/profile/${customProfile.username}`}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmit} disabled={saving}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
