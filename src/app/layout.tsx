@@ -5,6 +5,7 @@ import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import Navbar from '@/components/Nav';
 import { ThemeProvider } from '@/context/ThemeContext';
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,17 +21,20 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" >
         <body className='pop bg-white dark:bg-black'>
           <ThemeProvider>
             <Navbar />
             <main
               className='min-h-screen h-screen'
-              style={{
-                padding:"clamp(1rem,5vw,200rem) 0 0"
-              }}
-            >{children}
+              // style={{
+              //   padding:"clamp(1rem,5vw,200rem) 0 0"
+              // }}
+            >
+              {children}
+
             </main>
+              <Footer />
           </ThemeProvider>
         </body>
       </html>
