@@ -6,6 +6,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { UserProvider } from '@/context/UserContext';
 import Navbar from '@/components/Nav';
 import { ThemeProvider } from '@/context/ThemeContext';
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           </body>
         </html>
       </UserProvider>
+
     </ClerkProvider>
   );
 }

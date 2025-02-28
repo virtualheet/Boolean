@@ -1,70 +1,77 @@
 import Image from "next/image"
 import { Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Fields from "@/components/Fields"
 
 export default function ProductivityLanding() {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#f8f9fa]">
-      {/* Background pattern */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "radial-gradient(#e0e0e0 1px, transparent 1px)",
-          backgroundSize: "20px 20px",
-        }}
-      />
+    <div className="relative min-h-screen bg-white dark:bg-black w-full h-screen items-center  overflow-hidden "
+      // style={{
+      //   padding: "clamp(1rem,5vw,200rem) 0 0"
+      // }}
+    >
+      <nav className="bg-white dark:bg-black shadow-sm">
+        <div className="container mx-auto">
+          <Fields />
+        </div>
+      </nav>
+        <div
+          className="absolute inset-0 z-0 dark:bg-[radial-gradient(#ffffff 1px, transparent 1px)] bg-[radial-gradient(#000000 1px, transparent 1px)]"
+          style={{
+            backgroundSize: "40px 40px",
+          }}
+        />
 
-      {/* Main content container */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-20">
+        {/* Main content container */}
+      <div className="relative flex items-center flex-col z-10 mx-auto max-w-7xl "
+      style={{
+        gap: 'clamp(1rem,3vw,200rem)',
+        padding: 'clamp(7rem,6vw,200rem) 0 '
+      }}
+      >
         {/* Sticky note */}
-        <div className="absolute left-[10%] top-[15%] rotate-[-5deg] transform">
-          <div className="w-48 h-48 bg-yellow-100 p-5 shadow-md">
+        <div className="absolute left-[0%] top-[5%] rotate-[-5deg] transform">
+          <div className="w-72 h-48 bg-yellow-100 rounded-xl p-5 shadow-md">
             <p className="font-handwriting text-sm leading-tight">
-              Take notes to keep track of crucial details, and accomplish more tasks with ease.
+            Keep track of ideas and tasks in real time so you never miss a deadline.
             </p>
             <div className="absolute -left-1 -top-1">
               <div className="h-4 w-4 rounded-full bg-red-500" />
             </div>
             <div className="absolute bottom-5 left-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white shadow-sm">
-                <div className="h-5 w-5 rounded-sm bg-blue-500 text-white flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4"
-                  >
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
+                <Image
+                  src='/logo/logo.svg'
+                  width={100}
+                  height={100}
+                  alt='logo'
+                  className='w-full border-2  border-black dark:border-white rounded-xl '
+                /> 
               </div>
             </div>
           </div>
         </div>
 
         {/* App logo */}
-        <div className="absolute left-1/2 top-[20%] -translate-x-1/2 transform">
-          <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-white shadow-md">
-            <div className="grid grid-cols-2 grid-rows-2 gap-1">
-              <div className="h-3 w-3 rounded-full bg-blue-500"></div>
-              <div className="h-3 w-3 rounded-full bg-black"></div>
-              <div className="h-3 w-3 rounded-full bg-black"></div>
-              <div className="h-3 w-3 rounded-full bg-black"></div>
-            </div>
+        <div className="  z-50">
+          <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white shadow-md">
+            <Image
+              src='/logo/logo.svg'
+              width={100}
+              height={100}
+              alt='logo'
+              className='w-full shadow-lg shadow-black/20 dark:shadow-white/70 dark:border-white rounded-3xl'
+            /> 
           </div>
         </div>
 
         {/* Reminders card */}
-        <div className="absolute right-[10%] top-[15%] rotate-[5deg] transform">
-          <div className="w-56 rounded-xl bg-white p-4 shadow-md">
+        <div className="absolute right-[0%] top-[7%] rotate-[5deg] transform">
+          <div className="w-72 rounded-xl bg-white p-4 shadow-md">
             <div className="mb-2 text-sm font-semibold text-gray-500">Reminders</div>
             <div className="mt-4 rounded-lg bg-gray-50 p-3">
-              <div className="text-sm font-medium">Today's Meeting</div>
-              <div className="text-xs text-gray-500">Call with marketing team</div>
+              <div className="text-sm font-medium">Today's Order</div>
+              <div className="text-xs text-gray-500">Message with client</div>
               <div className="mt-2 flex items-center">
                 <div className="text-xs font-medium text-gray-500">Time</div>
                 <div className="ml-2 flex items-center rounded-full bg-blue-50 px-2 py-1">
@@ -82,8 +89,8 @@ export default function ProductivityLanding() {
         </div>
 
         {/* Today's tasks card */}
-        <div className="absolute bottom-[15%] left-[10%] rotate-[-3deg] transform">
-          <div className="w-56 rounded-xl bg-white p-4 shadow-md">
+        <div className="absolute bottom-[0%] left-[0%] rotate-[-3deg] transform">
+          <div className="w-72 rounded-xl bg-white p-4 shadow-md">
             <div className="mb-4 text-sm font-semibold">Today's tasks</div>
 
             <div className="mb-4">
@@ -92,7 +99,7 @@ export default function ProductivityLanding() {
                   <div className="mr-2 flex h-5 w-5 items-center justify-center rounded bg-red-500 text-white text-xs">
                     N
                   </div>
-                  <span className="text-xs">New ideas for campaign</span>
+                  <span className="text-xs">Review Design Concepts</span>
                 </div>
                 <div className="flex">
                   <Image
@@ -123,7 +130,7 @@ export default function ProductivityLanding() {
                   <div className="mr-2 flex h-5 w-5 items-center justify-center rounded bg-green-500 text-white text-xs">
                     D
                   </div>
-                  <span className="text-xs">Design PPT #4</span>
+                  <span className="text-xs">Finalize Client Contract</span>
                 </div>
                 <div className="flex">
                   <Image
@@ -144,9 +151,10 @@ export default function ProductivityLanding() {
         </div>
 
         {/* Integrations card */}
-        <div className="absolute bottom-[15%] right-[10%] rotate-[3deg] transform">
+        <div className="absolute bottom-[1%] right-[0%] rotate-[3deg] transform">
           <div className="w-56 rounded-xl bg-white p-4 shadow-md">
-            <div className="mb-4 text-sm font-semibold">100+ Integrations</div>
+            <div className="mb-4 text-sm font-semibold">1 New Message from your client</div>
+            <div className="mb-4 text-sm font-semibold">Proposal Approved for Logo Redesign</div>
             <div className="flex justify-center space-x-2">
               <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-white shadow-sm">
                 <svg viewBox="0 0 24 24" width="32" height="32">
@@ -188,20 +196,20 @@ export default function ProductivityLanding() {
         </div>
 
         {/* Main heading */}
-        <div className="relative z-20 mx-auto mt-32 max-w-3xl text-center">
-          <h1 className="text-6xl font-bold tracking-tight text-gray-900">
-            Think, plan, and track
+        <div className="relative z-20 mx-auto  max-w-3xl text-center">
+          <h1 className="text-7xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Hire, plan, and track
             <div className="text-gray-400">all in one place</div>
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-gray-600">
-            Efficiently manage your tasks and boost productivity.
+          <p className="mx-auto mt-6 max-w-xl text-lg text-black dark:text-white/70">
+          Efficiently connect with top freelancers, manage projects, and boost your productivity.
           </p>
           <div className="mt-10">
             <Button
               size="lg"
-              className="rounded-full bg-blue-500 px-8 py-6 text-lg font-medium text-white hover:bg-blue-600"
+              className="rounded-full bg-black dark:bg-white dark:text-black px-8 py-6 text-lg font-medium text-white hover:bg-black/60"
             >
-              Get free demo
+             Get started
             </Button>
           </div>
         </div>
