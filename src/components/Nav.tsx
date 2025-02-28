@@ -40,7 +40,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <nav className="fixed bottom-4 z-50 w-full  bg-transparent dark:bg-transparent transition-colors duration-200">
+        <nav className="fixed bottom-1 z-50 w-full  bg-transparent dark:bg-transparent transition-colors duration-200">
             <div className="w-[50%] border-2 bg-white dark:bg-black border-black/20 dark:border-white/40 rounded-2xl mx-auto px-4 sm:px-6 lg:px-3">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo and project name */}
