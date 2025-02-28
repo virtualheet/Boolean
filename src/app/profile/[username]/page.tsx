@@ -102,7 +102,7 @@ const ProfilePage = () => {
             className="object-cover opacity-50" 
           />  */}
                         {/* Name and bio */}
-                        <h1 className="text-2xl font-semibold mb-1 capitalize">{user?.firstName} {user?.lastName}</h1>
+                        <h1 className="text-2xl font-semibold mb-1 capitalize">{user?.id} {user?.lastName}</h1>
                         <p className="text-base text-gray-600 dark:text-gray-400 mb-8">{profileData.description}</p>
                     </div>
 
