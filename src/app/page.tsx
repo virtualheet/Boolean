@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Fields from "@/components/Fields"
+import Link from "next/link"
 
 export default function ProductivityLanding() {
   return (
@@ -205,12 +206,13 @@ export default function ProductivityLanding() {
           Efficiently connect with top freelancers, manage projects, and boost your productivity.
           </p>
           <div className="mt-10">
-            <Button
-              size="lg"
-              className="rounded-full bg-black dark:bg-white dark:text-black px-8 py-6 text-lg font-medium text-white hover:bg-black/60"
+            <Link href="/sync-user">
+            <button
+              className="rounded-full bg-black dark:bg-white dark:text-black px-8 py-3 text-lg font-medium text-white hover:bg-black/60"
             >
              Get started
-            </Button>
+            </button>
+            </Link>
           </div>
         </div>
       </div>

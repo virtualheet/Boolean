@@ -2,29 +2,30 @@
 
 import fiverrCategories from '@/data/fields';
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Fields = () => {
-    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
     
-    const handleMouseEnter = (category: string) => {
-        setActiveCategory(category);
-    };
+  const handleMouseEnter = (category: string) => {
+    setActiveCategory(category);
+  };
     
-    const handleMouseLeave = () => {
-        setActiveCategory(null);
-    };
+  const handleMouseLeave = () => {
+    setActiveCategory(null);
+  };
     
-    return (
-        <div className="w-full relative bg-white dark:bg-black flex z-[999]" onMouseLeave={handleMouseLeave}>
-            {/* Main category navigation */}
-            <div className="flex items-center overflow-x-auto border-b border-gray-200 bg-white dark:bg-black scrollbar-none">
-                {fiverrCategories.map((item) => (
-                    <div
-                        key={item.category}
-                        className={`px-4 py-4 whitespace-nowrap text-base cursor-pointer transition-colors ${
-                            activeCategory
-                ? 'text-black font-medium' 
-                : 'text-black/90 dark:text-white/90 hover:text-black'
+  return (
+    <div className="w-full relative bg-white dark:bg-black flex z-[999]" onMouseLeave={handleMouseLeave}>
+      {/* Main category navigation */}
+      <div className="flex items-center overflow-x-auto border-b border-white/80 bg-white dark:bg-black scrollbar-none">
+        {fiverrCategories.map((item) => (
+          <div
+            key={item.category}
+            className={`px-4 py-4 whitespace-nowrap text-base cursor-pointer transition-colors ${
+              activeCategory === item.category
+                ? 'text-black dark:text-white font-medium'
+                : 'text-black/90 dark:text-white/90 hover:dark:text-white hover:text-black'
             }`}
             onMouseEnter={() => handleMouseEnter(item.category)}
           >
@@ -39,45 +40,56 @@ const Fields = () => {
           </button>
         </div>
       </div>
-      
-      {/* Dropdown menu */}
-      {activeCategory && (
-        <div className="absolute top-16 z-50 w-full border-b border-gray-200 bg-white shadow-lg">
-          <div className="container mx-auto p-8">
-            <div className="grid grid-cols-4 gap-8">
-              {fiverrCategories
-                .find(item => item.category === activeCategory)
-                ?.subcategories.map((subcategory) => (
-                  <div key={subcategory.name} className="mb-6">
-                    <h3 className="text-gray-800 font-medium mb-4">{subcategory.name}</h3>
-                    <ul className="space-y-3">
-                      {subcategory.fields.map((field) => (
-                        <li key={field} className="text-gray-600 hover:text-gray-900">
-                          <a href="#" className="flex items-center">
-                            {field}
-                            {subcategory.newTags && subcategory.newTags.includes(field) && (
-                              <span className="ml-2 text-xs bg-pink-100 text-pink-500 px-2 py-0.5 rounded-full">
-                                NEW
-                              </span>
-                            )}
+        
+      {/* Dropdown menu with Framer Motion */}
+      <AnimatePresence>
+        {activeCategory && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ 
+              duration: 0.3, 
+              ease: "easeOut" 
+            }}
+            className="absolute top-14 z-50 w-full border-b border-gray-200 bg-white shadow-lg"
+          >
+            <div className="container mx-auto p-8">
+              <div className="grid grid-cols-4 gap-8">
+                {fiverrCategories
+                  .find(item => item.category === activeCategory)
+                  ?.subcategories.map((subcategory) => (
+                    <div key={subcategory.name} className="mb-6">
+                      <h3 className="text-gray-800 font-medium mb-4">{subcategory.name}</h3>
+                      <ul className="space-y-3">
+                        {subcategory.fields.map((field) => (
+                          <li key={field} className="text-gray-600 hover:text-gray-900">
+                            <a href="#" className="flex items-center">
+                              {field}
+                              {subcategory.newTags && subcategory.newTags.includes(field) && (
+                                <span className="ml-2 text-xs bg-pink-100 text-pink-500 px-2 py-0.5 rounded-full">
+                                  NEW
+                                </span>
+                              )}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                      {subcategory.hasSpecialLink && (
+                        <div className="mt-4">
+                          <a href="#" className="text-blue-500 flex items-center">
+                            {subcategory.specialLinkName}
+                            <span className="ml-1">{subcategory.specialLinkIcon}</span>
                           </a>
-                        </li>
-                      ))}
-                    </ul>
-                    {subcategory.hasSpecialLink && (
-                      <div className="mt-4">
-                        <a href="#" className="text-blue-500 flex items-center">
-                          {subcategory.specialLinkName} 
-                          <span className="ml-1">{subcategory.specialLinkIcon}</span>
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
