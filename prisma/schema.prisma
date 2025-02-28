@@ -1,3 +1,15 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+
 model User {
   id             String    @id @default(uuid())
   firstName      String
@@ -5,8 +17,8 @@ model User {
   about          String?
   email          String?   @unique
   profileImage   String?
-  socialLinks    String[]
-  skills         String[]
+  socialLinks    Json      @default("[]")
+  skills         Json      @default("[]")
   isFreelancer   Boolean   @default(false)
   isClient       Boolean   @default(false)
   rating         Float?
@@ -22,7 +34,7 @@ model User {
   selling        Seller[]   @relation("UserSellers")
   sentMessages   Message[]  @relation("MessageSender")
   receivedMessages Message[] @relation("MessageReceiver")
-  contactInfo    String[]
+  contactInfo    Json      @default("[]")
 
   @@map("users")
 }
@@ -32,7 +44,6 @@ model PortfolioProject {
   title       String
   description String
   link        String?
-  images      String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -48,11 +59,11 @@ model Work {
   description String
   category    String
   subcategory String?
-  skills      String[]
+  skills      Json      @default("[]")
   pricing     Float
   pricingType String   
   duration    String?  
-  images      String[] 
+  images      Json      @default("[]")
   rating      Float?
   ratingCount Int      @default(0)
   createdAt   DateTime @default(now())
@@ -90,7 +101,7 @@ model Project {
   status      String   
   startDate   DateTime @default(now())
   endDate     DateTime?
-  milestones  Json[]  
+  milestones  Json      @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -151,7 +162,7 @@ model Message {
   id          String   @id @default(uuid())
   content     String
   read        Boolean  @default(false)
-  attachments String[]
+  attachments Json      @default("[]")
   createdAt   DateTime @default(now())
   
   sender      User     @relation("MessageSender", fields: [senderId], references: [id])
