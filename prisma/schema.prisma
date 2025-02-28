@@ -1,14 +1,14 @@
+
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  extensions = [vector]
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
-
+        
 
 model User {
   id             String    @id @default(uuid())
@@ -174,4 +174,3 @@ model Message {
 
   @@map("messages")
 }
-

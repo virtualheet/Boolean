@@ -18,7 +18,7 @@ const SyncUserComponent = ({id}: {id: string}) => {
                 id: id
             })
             console.log(response.data.message)
-            redirect(`/profile/${username}`) 
+            redirect(`/profile/${username}/edit`) 
         }else{
             console.log("Username is not available")
         }

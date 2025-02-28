@@ -106,7 +106,7 @@ const ProfilePage = () => {
                         
                         {/* Name and bio */}
                         <h1 className="text-2xl font-semibold mb-1 capitalize">
-                            {user?.firstName} {user?.lastName}
+                            id {user?.id} ---{user?.firstName}  {user?.lastName}
                         </h1>
                         <p className="text-base text-black/70 dark:text-white/70 mb-8">
                             {profileData.description}

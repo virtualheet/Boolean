@@ -17,7 +17,7 @@ export async function POST(req: any, res: any) {
 
     const user = await prisma.user.findFirst({
       where: {
-        username: username
+          username: username,
       }
     });
 

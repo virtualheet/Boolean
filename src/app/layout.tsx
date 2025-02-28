@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Project Name',
+  title: 'Boolean - Freelance Platform',
   description: 'A Next.js application with dark/light mode',
 };
 
@@ -29,11 +29,12 @@ export default function RootLayout({
               <Navbar />
               <main
                 className='min-h-screen h-screen'
-                style={{
-                  padding:"clamp(1rem,5vw,200rem) 0 0"
-                }}
+                // style={{
+                //   padding:"clamp(1rem,5vw,200rem) 0 0"
+                // }}
               >{children}
               </main>
+              <Footer />
             </ThemeProvider>
           </body>
         </html>

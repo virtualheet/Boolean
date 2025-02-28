@@ -3,13 +3,15 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import { Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import Image from 'next/image';
 import useSound from 'use-sound';
+import { Button } from './ui/button';
 
 const Navbar = () => {
+    const { user } = useUser();
     const { theme, toggleTheme } = useTheme();
     const [playsound] = useSound('/audios/light.mp3')
     const [mounted, setMounted] = useState(false);
@@ -123,15 +125,21 @@ const Navbar = () => {
 
                             {/* User button */}
                             <div className="flex items-center">
-                                <UserButton
+                                {user ?     <UserButton
 
-                                    appearance={{
-                                        elements: {
-                                            rootBox: 'hover:opacity-80 transition-opacity',
-                                            avatarBox: 'w-12 h-12 rounded-xl',
-                                        }
-                                    }}
-                                />
+appearance={{
+    elements: {
+        rootBox: 'hover:opacity-80 transition-opacity',
+        avatarBox: 'w-12 h-12 rounded-xl',
+    }
+}}
+/> :  <Link href={'/sign-in'}
+>
+    <Button>
+        Login
+    </Button>
+</Link>}
+                            
                             </div>
                         </div>
                     </div>
