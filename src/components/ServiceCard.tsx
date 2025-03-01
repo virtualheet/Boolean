@@ -1,8 +1,10 @@
 import { Heart } from "lucide-react"
+import image from "next/image"
 import Image from "next/image"
 
+// lets make an service card with fixed with of style={{}} with using clamp property
+
 interface ServiceCardProps {
-    image: string
     bgColor: string
     sellerImage: string
     sellerName: string
@@ -16,7 +18,6 @@ interface ServiceCardProps {
   }
 
 const ServiceCard = ({
-    image,
     bgColor,
     sellerImage,
     sellerName,
@@ -29,39 +30,55 @@ const ServiceCard = ({
     hasVideoConsultation,
   }: ServiceCardProps) => {
     return (
-      <div className="rounded-md overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
-        <div className={`relative h-48 ${bgColor}`}>
-          <Image src={image || "/placeholder.svg"} alt={title} fill className="object-contain p-4" />
-          <button className="absolute top-3 right-3 p-1.5 bg-white rounded-full hover:bg-gray-100">
-            <Heart className="w-5 h-5 text-gray-500" />
-          </button>
-        </div>
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="relative w-8 h-8 rounded-full overflow-hidden">
-              <Image src={sellerImage || "/placeholder.svg"} alt={sellerName} fill className="object-cover" />
+      <div className="w-full  pop bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="flex flex-col"
+        style={{
+          padding: 'clamp(1rem, 1vw, 200rem)',
+          gap: 'clamp(0.5rem, 1vw, 200rem)',
+        }}
+        >
+          <div className="flex items-center ">
+            <div className="w-8 h-8 rounded-full bg-purple-100 overflow-hidden mr-2 flex-shrink-0">
+              <Image src={sellerImage} alt={sellerName} fill className="object-cover" />
             </div>
-            <span className="font-medium">{sellerName}</span>
-            {isTopRated && (
-              <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-sm ml-auto">Top Rated ⭐⭐⭐</span>
-            )}
-            {isPro && <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full ml-auto">Pro</span>}
-          </div>
-          <h3 className="text-sm mb-2 line-clamp-2 h-10">{title}</h3>
-          <div className="flex items-center gap-1 mb-2">
-            <span className="text-yellow-500">★</span>
-            <span className="font-medium">{rating}</span>
-            <span className="text-gray-500">({reviews})</span>
-          </div>
-          <div className="font-medium mb-2">From {price}</div>
-          {hasVideoConsultation && (
-            <div className="text-xs text-gray-500 flex items-center gap-1">
-              <span className="w-4 h-4 flex items-center justify-center rounded-full border border-gray-400">
-                <span className="block w-2 h-2 bg-gray-400 rounded-full"></span>
-              </span>
-              Offers video consultations
+            <div>
+              <div className="flex items-center">
+                <span className="font-medium text-base">{sellerName}</span>
+              </div>
             </div>
-          )}
+          </div>
+          <div className="">
+            <h2 className="text-4xl inter font-bold truncate">{price}</h2>
+          </div>
+          <div className="flex items-center ">
+            <div className="flex items-center text-gray-500 text-sm mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>14 Oct - 2024</span>
+            </div>
+            <div className="flex items-center text-gray-500 text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>89.5% Match</span>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 ">
+            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center">
+              <span className="mr-1">★</span>
+              {rating}
+            </span>
+            <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Web Design</span>
+            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Responsive</span>
+          </div>
+          <div className="">
+            <p className="text-gray-700 truncate"><span className="font-semibold">Need Responsive Website:</span> showcase product Modern and visually appealing design.</p>
+          </div>
+          <div className="flex flex-col gap-2 ">
+            <button className="w-full bg-black text-white py-3 rounded-full font-medium hover:bg-gray-800">Send Offer</button>
+            <button className="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-full font-medium hover:bg-gray-100">Chat with Seller</button>
+          </div>
         </div>
       </div>
     )

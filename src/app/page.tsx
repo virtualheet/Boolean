@@ -226,10 +226,10 @@ export default function ProductivityLanding() {
     <div className={''}>
       <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors duration-300">
         <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Logo Design Services</h1>
+          <h1 className="text-4xl text-center w-full font-semibold text-black inter dark:text-white">Services</h1>
         </header>
         
-        <main className="max-w-7xl mx-auto">
+        <main className="max-w-screen flex justify-center w-full flex-col items-center">
           <ServiceCardGrid title="Based on your browsing history" services={browserHistoryServices} />
           <ServiceCardGrid title="Gigs you may like" services={gigsYouMayLike} />
         </main>
@@ -271,7 +271,36 @@ const browserHistoryServices = [
     hasVideoConsultation: false
   },
   {
-    id: '3',
+    id: '8',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-blue-100",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Louis Key",
+    isPro: true,
+    isTopRated: false, 
+    title: "I will design a timeless logo",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹11,926",
+    hasVideoConsultation: false
+  },
+  {
+    id: '9',
+    image: "/api/placeholder/400/320",
+    bgColor: "bg-blue-100",
+    sellerImage: "/api/placeholder/40/40",
+    sellerName: "Louis Key",
+    isPro: true,
+    isTopRated: false, 
+    title: "I will design a timeless logo",
+    rating: 4.8,
+    reviews: "1k+",
+    price: "₹11,926",
+    hasVideoConsultation: false
+  },
+
+  {
+    id: '31',
     image: "/api/placeholder/400/320",
     bgColor: "bg-slate-800",
     sellerImage: "/api/placeholder/40/40",
