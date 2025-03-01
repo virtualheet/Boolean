@@ -22,7 +22,7 @@ const UserAllCreatedProjected = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/jobs/user-projects');
+        const response = await fetch('/api/jobs/userProjects');
         const data = await response.json();
         
         if (response.ok) {

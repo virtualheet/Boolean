@@ -9,6 +9,9 @@ import { useTheme } from '@/context/ThemeContext';
 import Image from 'next/image';
 import useSound from 'use-sound';
 import { Button } from './ui/button';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const Navbar = () => {
     const { user } = useUser();
@@ -19,7 +22,30 @@ const Navbar = () => {
 
     // Ensure theme toggle only works client-side
     useEffect(() => {
+        const saveUserfunction = async () => {
+            if (user){
+                const existingUser = await prisma.user.findFirst({
+                    where: {
+                        id:user.id,
+                    }
+                })
+                if (!existingUser) {
+                    await prisma.user.create({
+                        data: {
+                            id: user.id,
+                            firstName: user.firstName || '',
+                            lastName: user.lastName || '',
+                            email: user.emailAddresses[0].emailAddress,
+                            username: user.username || '',
+                            profileImage: user.imageUrl || '',
+                            
+                        }
+                    })
+                }
+            }
+        }
         setMounted(true);
+        saveUserfunction()
     }, []);
 
     useEffect(() => {
