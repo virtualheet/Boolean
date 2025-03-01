@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { UserButton, useUser } from '@clerk/nextjs';
-import { Moon, Search, Sun } from 'lucide-react';
+import { MessageCircle, Moon, Search, Sun } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import Image from 'next/image';
 import useSound from 'use-sound';
@@ -125,6 +125,14 @@ const Navbar = () => {
                                         <Moon /> :
                                         <Sun />
                                 )}
+                            </button>
+
+                            {/* messgae button as same theme of above buttton */}
+                            <button
+                                className="w-10 h-10 border-2 items-center flex justify-center text-2xl border-black/40 dark:border-white/40 rounded-xl  text-black dark:text-white  focus:outline-none"
+                                aria-label="Toggle dark mode"
+                            >
+                                <MessageCircle />
                             </button>
 
                             {/* User button */}

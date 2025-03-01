@@ -12,7 +12,6 @@ interface ServiceCardGridProps {
 
 interface ServiceItem {
   id: string;
-  image: string;
   bgColor: string;
   sellerImage: string;
   sellerName: string;
@@ -42,7 +41,7 @@ const ServiceCardGrid: React.FC<ServiceCardGridProps> = ({ title, services }) =>
   };
 
   return (
-    <div className="w-full py-8">
+    <div className="w-[] py-8">
       <div className="flex justify-between items-center mb-6 px-4">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h2>
         <div className="flex space-x-2">
@@ -65,34 +64,31 @@ const ServiceCardGrid: React.FC<ServiceCardGridProps> = ({ title, services }) =>
         </div>
       </div>
       
-      <div 
+      <div
+        className="overflow-x-auto scrollbar-hidden whitespace-nowrap ml-3 mr-2"
         ref={scrollRef}
-        className="flex overflow-x-auto space-x-4 px-4 pb-4 scrollbar-none"
       >
-        {services.map((service) => (
-          <motion.div
-            key={service.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            whileHover={{ y: -5 }}
-            className="min-w-[280px]"
-          >
-            <ServiceCard 
-              image={service.image}
-              bgColor={service.bgColor}
-              sellerImage={service.sellerImage}
-              sellerName={service.sellerName}
-              isPro={service.isPro}
-              isTopRated={service.isTopRated}
-              title={service.title}
-              rating={service.rating}
-              reviews={service.reviews}
-              price={service.price}
-              hasVideoConsultation={service.hasVideoConsultation}
-            />
-          </motion.div>
-        ))}
+        <div className="flex gap-1 md:gap-4">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="inline-block md:w-[24%] w-[49%] mx-auto"
+            >
+              <ServiceCard
+                bgColor={service.bgColor}
+                sellerImage={service.sellerImage}
+                sellerName={service.sellerName}
+                isPro={service.isPro}
+                isTopRated={service.isTopRated}
+                title={service.title}
+                rating={service.rating}
+                reviews={service.reviews}
+                price={service.price}
+                hasVideoConsultation={service.hasVideoConsultation}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
